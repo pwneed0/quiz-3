@@ -3,14 +3,25 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 	"mini-project/controllers"
+	"mini-project/structs"
 	"os"
 )
 
+var users = []structs.User{
+	{"admin", "password"},
+	{"editor", "secret"},
+}
+
 func basicAuth() gin.HandlerFunc {
-	return gin.BasicAuth(gin.Accounts{
-		"admin":  "password",
-		"editor": "secret",
-	})
+	return func(c *gin.Context) {
+		username, password, ok := c.Request.BasicAuth()
+		if !ok || (username != "admin" && username != "editor") || (password != "password" && password != "secret") {
+			c.Header("WWW-Authenticate", `Basic realm="Authorization Required"`)
+			c.AbortWithStatus(401)
+			return
+		}
+		c.Next()
+	}
 }
 func StartServer() *gin.Engine {
 	r := gin.Default()
