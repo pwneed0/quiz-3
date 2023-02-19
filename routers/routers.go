@@ -1,0 +1,37 @@
+package routers
+
+import (
+	"github.com/gin-gonic/gin"
+	"mini-project/controllers"
+	"os"
+)
+
+func basicAuth() gin.HandlerFunc {
+	return gin.BasicAuth(gin.Accounts{
+		"admin":  "password",
+		"editor": "secret",
+	})
+}
+func StartServer() *gin.Engine {
+	r := gin.Default()
+
+	r.GET("/bangun-datar/segitiga-sama-sisi", controllers.Segitiga)
+	r.GET("/bangun-datar/persegi", controllers.Persegi)
+	r.GET("/bangun-datar/persegi-panjang", controllers.PersegiPanjang)
+	r.GET("/bangun-datar/lingkaran", controllers.Lingkaran)
+	r.GET("/categories", controllers.GetCat)
+	r.POST("/categories", basicAuth(), controllers.PostCat)
+	r.PUT("/categories/:id", basicAuth(), controllers.UpdateCat)
+	r.DELETE("/categories/:id", basicAuth(), controllers.DeleteCat)
+	r.GET("/categories/:id/books", controllers.GetCatId)
+	r.GET("/books", controllers.GetBooks)
+	r.POST("/books", basicAuth(), controllers.PostBooks)
+	r.PUT("/books/:id", basicAuth(), controllers.UpdateBooks)
+	r.DELETE("/books/:id", basicAuth(), controllers.DeleteBooks)
+
+	err := r.Run(":" + os.Getenv("PORT"))
+	if err != nil {
+		panic(err.Error())
+	}
+	return r
+}
