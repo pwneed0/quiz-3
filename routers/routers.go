@@ -3,14 +3,8 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 	"mini-project/controllers"
-	"mini-project/structs"
 	"os"
 )
-
-var users = []structs.User{
-	{"admin", "password"},
-	{"editor", "secret"},
-}
 
 func basicAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
